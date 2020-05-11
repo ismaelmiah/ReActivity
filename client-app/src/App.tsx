@@ -1,5 +1,5 @@
 import React,{Component} from 'react';
-import logo from './logo.svg';
+import {Header, Icon, List} from 'semantic-ui-react';
 import './App.css';
 import axios from 'axios';
 
@@ -21,12 +21,15 @@ class App extends Component {
   render(){
     return(
       <div>
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        {this.state.values.map((values: any) => (
-          <li key={values.id}>{values.name}</li>
-        ))}
-      </header>
+        <Header as='h2'>
+          <Icon name='users' />
+          <Header.Content>Reactivities</Header.Content>
+          <List>
+              {this.state.values.map((values: any) => (
+              <List.Item key={values.id}>{values.name}</List.Item>
+            ))}
+          </List>
+        </Header>
     </div>
     )
   }
