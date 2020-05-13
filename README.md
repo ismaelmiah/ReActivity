@@ -56,6 +56,9 @@ Project(s)
 ![2](https://user-images.githubusercontent.com/31995155/72104267-415be680-3355-11ea-914f-5e0a8d590db2.png)
 ![3](https://user-images.githubusercontent.com/31995155/72104269-428d1380-3355-11ea-8a6d-51867e19ddea.png)
 
+## The Clean Architecture for Mediatr
+![References](http://blog.cleancoder.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg)
+
 ### Part-2 (React)
 - Folder structure (React)
 - Getting list activities from API
@@ -78,7 +81,7 @@ Project(s)
    
    
 ## Branch: Reactstructure
-- Update API route: Route("api/[controller]")
+- Update API route: Route("[controller]")
 - Create an agent.ts (Axios support)
 - Adding delay our API(activities) method
 - Adding Loading component
