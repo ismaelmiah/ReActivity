@@ -26,10 +26,10 @@ Project(s)
 - API/API.csproj
 
 ### Reference between sub-Project's and Main Project
-- /eActivities/Application$ dotnet add reference ../Domain/
-- /eActivities/Application$ dotnet add reference ../Persistence/
-- /eActivities/API$ dotnet add reference ../Application/
-- /eActivities/Persistence$ dotnet add reference ../Domain/
+- /reactivities/Application$ dotnet add reference ../Domain/
+- /reactivities/Application$ dotnet add reference ../Persistence/
+- /reactivities/API$ dotnet add reference ../Application/
+- /reactivities/Persistence$ dotnet add reference ../Domain/
 ![References](https://user-images.githubusercontent.com/31995155/71798572-e8eac780-307c-11ea-869e-1f1007db5184.png)
 
 
