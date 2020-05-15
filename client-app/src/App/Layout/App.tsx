@@ -7,6 +7,9 @@ import ActivityDashboard from '../../Features/Activities/Dashboard/ActivityDashb
 
   const App = () => {
     const [activities, setActivities] = useState<IActivity[]>([]);
+    const [selectedActivity, setSelectedActivity] = useState<IActivity | null>(null);
+    const[Editmode, setEditmode] = useState(false);
+
     useEffect(() => {
       axios.get<IActivity[]>('http://localhost:5000/activities').then((response) => {
         console.log(response);
@@ -14,11 +17,26 @@ import ActivityDashboard from '../../Features/Activities/Dashboard/ActivityDashb
       });
     }, []);
 
+    const handleSelectActivity = (id: string) => {
+      setSelectedActivity(activities.filter( a => a.id === id)[0])
+    }
+
+    const handleOpenCreateForm = () => {
+      setSelectedActivity(null);
+      setEditmode(true);
+    }
+
     return(
       <Fragment>
-        <NavBar />
+        <NavBar openCreateForm={handleOpenCreateForm} />
         <Container style={{marginTop: '7em'}}>
-        <ActivityDashboard activities={activities} />
+        <ActivityDashboard
+         activities={activities}
+         selectActivity={handleSelectActivity}
+         selectedActivity={selectedActivity}
+         editmode={Editmode}
+         setEditmode={setEditmode}
+         setSelectedActivity={setSelectedActivity} />
         </Container>
     </Fragment>
     );
