@@ -11,7 +11,7 @@ interface IProps{
 const ActivityDetails: React.FC<IProps> = ({activity, setEditmode, setSelectedActivity}) => {
     return (
         <Card fluid>
-            <Image src={`/items/categoryImages/${activity.category}.jpg`} wrapped-ui={false} />
+            <Image src={`/items/categoryImages/${activity.category}.jpg`} wrapped ui={false} />
             <Card.Content>
                 <Card.Header>{activity.title}</Card.Header>
                 <Card.Meta>
