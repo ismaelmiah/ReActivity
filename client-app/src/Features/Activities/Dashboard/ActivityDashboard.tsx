@@ -8,20 +8,14 @@ import ActivityForm from '../Form/ActivityForm';
 
 const ActivityDashboard = () => {
     const activityStore = useContext(ActivityStore);
-    const {editmode, selectedActivity} = activityStore;
+    const {editmode, Activity} = activityStore;
     return (
       <Grid>
           <GridColumn width={10}>
             <ActivityList />
           </GridColumn>
           <GridColumn width={6}>
-            {selectedActivity && !editmode && (<ActivityDetails />
-               )}
-            {editmode && (
-            <ActivityForm 
-            key={(selectedActivity && selectedActivity.id) || 0}
-             activity={selectedActivity!}
-             />)}
+            <h2>Activity Filters</h2>
           </GridColumn>
       </Grid>  
     );
