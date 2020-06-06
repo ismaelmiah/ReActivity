@@ -1,7 +1,7 @@
 import React, {useContext, Fragment } from 'react'
 import { observer } from 'mobx-react-lite';
 import ActivityStore from '../../../App/Stores/ActivityStore';
-import { Item, Segment, Label } from 'semantic-ui-react'
+import { Item, Label } from 'semantic-ui-react'
 import ActivityListItem from './ActivityListItem';
 
 const ActivityList = () => {

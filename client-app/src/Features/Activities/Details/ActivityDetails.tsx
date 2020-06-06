@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from 'react'
 import { Grid } from 'semantic-ui-react'
 import ActivityStore from '../../../App/Stores/ActivityStore';
 import {observer} from 'mobx-react-lite';
-import { RouteComponentProps, Link } from 'react-router-dom';
+import { RouteComponentProps} from 'react-router-dom';
 import LoadingComponent from '../../../App/Layout/Loader/LoadingComponent';
 import ActivityDetailedHeader from './ActivityDetailedHeader';
 import ActivityDetailedInfo from './ActivityDetailedInfo';
@@ -18,10 +18,15 @@ const ActivityDetails: React.FC<RouteComponentProps<Detail>> = ({match, history}
     const {Activity, loadActivity, loadingInitial} = activityStore;
     
     useEffect(() => {
-        loadActivity(match.params.id)
-    }, [loadActivity, match.params.id])
+        loadActivity(match.params.id).catch(() => {
+            history.push('/notfound');
+        })
+    }, [loadActivity, match.params.id, history])
     
-    if(loadingInitial || !Activity) return <LoadingComponent content='Loading Activity....' />
+    if(loadingInitial) return <LoadingComponent content='Loading Activity....' />
+    if(!Activity){
+        return <h1>Activity Not Found</h1>
+    }
     return (
         <Grid>
             <Grid.Column width={10}>
