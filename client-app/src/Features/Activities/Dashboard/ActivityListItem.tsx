@@ -2,6 +2,7 @@ import React from 'react'
 import { Item, Button, Segment, Icon} from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
 import { IActivity } from '../../../App/Models/Activity';
+import {format} from 'date-fns';
 
 const ActivityListItem: React.FC<{activity: IActivity}> = ({activity}) => {
 
@@ -13,7 +14,7 @@ const ActivityListItem: React.FC<{activity: IActivity}> = ({activity}) => {
                         <Item.Image size='tiny' circular src='/items/user.png' />
                         <Item.Content>
                             <Item.Header as='a'>{activity.title}</Item.Header>
-                            <Item.Meta>{activity.date}</Item.Meta>
+                            <Item.Meta>{format(activity.date, 'eeee do MMMM')}</Item.Meta>
                             <Item.Description>
                                 Hosted By Bob
                             </Item.Description>
@@ -22,7 +23,7 @@ const ActivityListItem: React.FC<{activity: IActivity}> = ({activity}) => {
                 </Item.Group>
                 </Segment>
                 <Segment>
-                    <Icon name='clock' /> {activity.date}
+                    <Icon name='clock' /> {format(activity.date, 'h:mm a')}
                     <Icon name='marker' /> {activity.venue}, {activity.city}
                 </Segment>
                 <Segment secondary>Attendees will go here</Segment>
