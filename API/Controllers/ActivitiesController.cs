@@ -6,9 +6,11 @@ using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
+        [Authorize]
     public class ActivitiesController : BaseController
     {
         [HttpGet]
