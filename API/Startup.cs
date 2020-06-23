@@ -1,4 +1,4 @@
-using API.Middleware;
+using API.MiddleWare;
 using Application.Activities;
 using Application.Interfaces;
 using Domain;
