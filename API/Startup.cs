@@ -17,6 +17,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace API
 {
@@ -49,11 +50,10 @@ namespace API
                 opt.Filters.Add(new AuthorizeFilter(policy));
             })
             .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<create>());
-            services.AddDefaultIdentity<AppUser>().AddEntityFrameworkStores<DataContext>();
-            //var builder = services.AddIdentityCore<AppUser>();
-            //var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
-            //identityBuilder.AddEntityFrameworkStores<DataContext>();
-            //identityBuilder.AddSignInManager<SignInManager<AppUser>>();
+            var builder = services.AddIdentityCore<AppUser>();
+            var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
+            identityBuilder.AddEntityFrameworkStores<DataContext>();
+            identityBuilder.AddSignInManager<SignInManager<AppUser>>();
 
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<IUserAccessor, UserAccessor>();
@@ -70,6 +70,7 @@ namespace API
                     };
                 }
             );
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -86,7 +87,7 @@ namespace API
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseAuthentication();
             app.UseCors("CorsPolicy");
 
             app.UseEndpoints(endpoints =>
