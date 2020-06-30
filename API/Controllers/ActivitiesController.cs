@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
-        [Authorize]
     public class ActivitiesController : BaseController
     {
         [HttpGet]
@@ -18,6 +17,7 @@ namespace API.Controllers
             return await Mediator.Send(new list.Query(), ct);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<Activity>> Details(Guid id){
             return await Mediator.Send(new details.Query{Id = id});

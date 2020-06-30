@@ -2,6 +2,7 @@ import { observable, computed, action, runInAction } from "mobx";
 import { IUser, IUserFormValue } from "../Models/User";
 import Agent from "../Api/Agent";
 import { RootStore } from "./rootStore";
+import { history } from "../..";
 
 export default class UserStore{
     
@@ -22,10 +23,27 @@ export default class UserStore{
                 this.user = user;
             })
             console.log(user);
-            //this.rootStore.commonStore.setToken(user.token);
-            //history.push('/activities');
+            this.rootStore.commonStore.setToken(user.token);
+            history.push('/activities');
         } catch (error) {
             throw error;
         }
+    }
+
+    @action getUser = async () => {
+        try {
+            const user = await Agent.User.current();
+            runInAction(() => {
+                this.user = user;
+            })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    @action logout = () => {
+        this.rootStore.commonStore.setToken(null);
+        this.user = null;
+        history.push('/')
     }
 }
