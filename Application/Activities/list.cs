@@ -37,7 +37,10 @@ namespace Application.Activities
                 catch(Exception ex) when (ex is TaskCanceledException){
                     _logger.LogInformation("Task was Cancelled");
                 }
-                var activities = await _context.Activities.ToListAsync(cancellationToken);
+                var activities = await _context.Activities
+                .Include(x=> x.UserActivities)
+                .ThenInclude(y=> y.AppUser)
+                .ToListAsync(cancellationToken);
                 return activities;
             }
         }

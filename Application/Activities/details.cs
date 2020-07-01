@@ -13,11 +13,11 @@ namespace Application.Activities
 {
     public class details
     {
-        public class Query : IRequest<Activity> {
+        public class Query : IRequest<ActivityDto> {
             public Guid Id { get; set; }
          }
 
-        public class Handler : IRequestHandler<Query, Activity>
+        public class Handler : IRequestHandler<Query, ActivityDto>
         {
             private readonly DataContext _context;
             public Handler(DataContext context)
@@ -25,10 +25,13 @@ namespace Application.Activities
                 _context = context;
 
             }
-            public async Task<Activity> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<ActivityDto> Handle(Query request, CancellationToken cancellationToken)
             {
                 
-                var activity = await _context.Activities.FindAsync(request.Id);
+                var activity = await _context.Activities
+                .Include(x=> x.UserActivities)
+                .ThenInclude(y=> y.AppUser)
+                .SingleOrDefaultAsync(x=> x.Id == request.Id);
                 
                 if(activity == null){
                     throw new RestException(HttpStatusCode.NotFound, new {activity = "Not Found"});
