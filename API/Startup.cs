@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
+using Newtonsoft.Json;
+
 
 namespace API
 {
@@ -36,6 +38,7 @@ namespace API
         {
             services.AddDbContext<DataContext>(options =>
             {
+                options.UseLazyLoadingProxies();
                 options.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
             });
             services.AddCors(options =>
@@ -51,7 +54,8 @@ namespace API
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                 opt.Filters.Add(new AuthorizeFilter(policy));
             })
-            .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<create>());
+            .AddFluentValidation(cfg => cfg.RegisterValidatorsFromAssemblyContaining<create>())
+            .AddNewtonsoftJson(option => option.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             var builder = services.AddIdentityCore<AppUser>();
             var identityBuilder = new IdentityBuilder(builder.UserType, builder.Services);
             identityBuilder.AddEntityFrameworkStores<DataContext>();
@@ -87,7 +91,6 @@ namespace API
             //app.UseHttpsRedirection();
 
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
 

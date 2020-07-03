@@ -10,8 +10,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.0.0"/>
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3"/>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.2"/>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.2"/>
   </ItemGroup>
   <PropertyGroup>
     <UserSecretsId>ab26c674-ce16-46bc-9c80-35db0f8987a4</UserSecretsId>
