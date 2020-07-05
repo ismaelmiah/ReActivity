@@ -8,7 +8,9 @@ namespace Application.Activities
         public MappingProfile()
         {
             CreateMap<Activity, ActivityDto>();
-            CreateMap<UserActivity, AttendeeDto>();
+            CreateMap<UserActivity, AttendeeDto>()
+                .ForMember(d => d.Username, opt => opt.MapFrom( src => src.AppUser.UserName))
+                .ForMember(d => d.DisplayName, opt => opt.MapFrom( src => src.AppUser.DisplayName));
         }
     }
 }

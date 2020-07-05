@@ -13,7 +13,7 @@ namespace API.Controllers
     public class ActivitiesController : BaseController
     {
         [HttpGet]
-        public async Task<ActionResult<List<Activity>>> List(CancellationToken ct){
+        public async Task<ActionResult<List<ActivityDto>>> List(CancellationToken ct){
             return await Mediator.Send(new list.Query(), ct);
         }
 

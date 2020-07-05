@@ -60,7 +60,8 @@ namespace Application.Activities
 
                 _context.Activities.Add(activity);
                 
-                var user = await _context.Users.SingleOrDefaultAsync(x=> x.UserName == _userAccessor.GetCurrentUsername());
+                var user = await _context.Users.SingleOrDefaultAsync
+                (x=> x.UserName == _userAccessor.GetCurrentUsername());
 
                 var attendee = new UserActivity
                 {
