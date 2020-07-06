@@ -42,8 +42,7 @@ namespace Application.Activities
                 {
                     _logger.LogInformation("Task was Cancelled");
                 }
-                var activities = await _context.Activities.Include(x => x.UserActivities).ThenInclude(y => y.AppUser)
-                .ToListAsync(cancellationToken);
+                var activities = await _context.Activities.ToListAsync(cancellationToken);
 
                 var ReturnActivities = _mapper.Map<List<Activity>, List<ActivityDto>>(activities);
                 return ReturnActivities;
