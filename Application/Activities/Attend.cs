@@ -32,14 +32,14 @@ namespace Application.Activities
             {
 
                 var activity = await _context.Activities.FindAsync(request.Id);
-            
-                if(activity == null) throw new RestException(HttpStatusCode.NotFound, new {Activity = "Could not find activity"});
 
-                var user = await _context.Users.SingleOrDefaultAsync( x=> x.UserName == _userAccessor.GetCurrentUsername());
+                if (activity == null) throw new RestException(HttpStatusCode.NotFound, new { Activity = "Could not find activity" });
 
-                var attedance = await _context.UserActivities.SingleOrDefaultAsync(x=> x.ActivityId == activity.Id && x.AppUserId == user.Id);
+                var user = await _context.Users.SingleOrDefaultAsync(x => x.UserName == _userAccessor.GetCurrentUsername());
 
-                if(attedance != null) throw new RestException(HttpStatusCode.BadRequest, new {Attedance = "Already attending this activity"});
+                var attedance = await _context.UserActivities.SingleOrDefaultAsync(x => x.ActivityId == activity.Id && x.AppUserId == user.Id);
+
+                if (attedance != null) throw new RestException(HttpStatusCode.BadRequest, new { Attedance = "Already attending this activity" });
 
                 attedance = new UserActivity
                 {
@@ -50,9 +50,9 @@ namespace Application.Activities
                 };
 
                 _context.UserActivities.Add(attedance);
-                
+
                 var success = await _context.SaveChangesAsync() > 0;
-                if(success) return Unit.Value;
+                if (success) return Unit.Value;
 
                 throw new Exception("Problem Saving Change");
             }

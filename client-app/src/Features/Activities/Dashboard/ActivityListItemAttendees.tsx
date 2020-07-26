@@ -7,7 +7,6 @@ interface IProps {
 }
 
 const ActivityListItemAttendees: React.FC<IProps> = ({ attendees }) => {
-  console.log(attendees);
   return (
     <List horizontal>
       {attendees &&
