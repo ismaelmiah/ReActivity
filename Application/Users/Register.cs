@@ -51,14 +51,14 @@ namespace Application.Users
 
             public async Task<User> Handle(Command request, CancellationToken cancellationToken)
             {
-                if(await _contest.Users.Where( x=> x.Email == request.Email).AnyAsync())
+                if (await _contest.Users.Where(x => x.Email == request.Email).AnyAsync())
                 {
-                    throw new RestException(HttpStatusCode.BadRequest, new {Email = "Email already exists"});
+                    throw new RestException(HttpStatusCode.BadRequest, new { Email = "Email already exists" });
                 }
-                
-                if(await _contest.Users.Where( x=> x.UserName == request.Username).AnyAsync())
+
+                if (await _contest.Users.Where(x => x.UserName == request.Username).AnyAsync())
                 {
-                    throw new RestException(HttpStatusCode.BadRequest, new {Username = "Username already exists"});
+                    throw new RestException(HttpStatusCode.BadRequest, new { Username = "Username already exists" });
                 }
 
                 var user = new AppUser
@@ -69,15 +69,15 @@ namespace Application.Users
                 };
 
                 var result = await _userManager.CreateAsync(user, request.Password);
-                
-                if(result.Succeeded)
+
+                if (result.Succeeded)
                 {
                     return new User
                     {
                         DisplayName = user.DisplayName,
                         Token = _jwtGenerator.CreateToken(user),
                         Username = user.UserName,
-                        Image = null
+                        Image = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
                     };
                 }
 

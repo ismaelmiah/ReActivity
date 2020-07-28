@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Interfaces;
@@ -16,7 +17,7 @@ namespace Application.Users
             private readonly IJwtGenerator _jwtGenerator;
             private readonly IUserAccessor _userAccessor;
             private readonly UserManager<AppUser> _userManager;
-            public Handler(UserManager<AppUser> userManager, IJwtGenerator jwtGenerator,IUserAccessor userAccessor)
+            public Handler(UserManager<AppUser> userManager, IJwtGenerator jwtGenerator, IUserAccessor userAccessor)
             {
                 _userAccessor = userAccessor;
                 _jwtGenerator = jwtGenerator;
@@ -32,7 +33,7 @@ namespace Application.Users
                     DisplayName = user.DisplayName,
                     Username = user.UserName,
                     Token = _jwtGenerator.CreateToken(user),
-                    Image = null
+                    Image = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
                 };
             }
         }
