@@ -1,18 +1,27 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Header, Grid, Image } from "semantic-ui-react";
+import { Header, Grid, Image, Button } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import PhotoWidgetDropzone from "./PhotoWidgetDropzone";
 import PhotoWidgetCropper from "./PhotoWidgetCropper";
+import { loadavg } from "os";
 
-export const PhotoUploadWidget = () => {
+interface IProps {
+  loading: boolean;
+  uploadPhoto: (file: Blob) => void;
+}
+
+export const PhotoUploadWidget: React.FC<IProps> = ({
+  loading,
+  uploadPhoto,
+}) => {
   const [files, setFiles] = useState<any[]>([]);
   const [image, setImage] = useState<Blob | null>(null);
 
   useEffect(() => {
     return () => {
-      files.forEach(file => URL.revokeObjectURL(file.preview))
-    }
-  })
+      files.forEach((file) => URL.revokeObjectURL(file.preview));
+    };
+  });
 
   return (
     <Fragment>
@@ -24,15 +33,37 @@ export const PhotoUploadWidget = () => {
         <Grid.Column width={1} />
         <Grid.Column width={4}>
           <Header sub color="teal" content="Step 2 - Resize image" />
-          {files.length > 0 && 
-          <PhotoWidgetCropper setImage = {setImage} imagePreview = {files[0].preview} />}
+          {files.length > 0 && (
+            <PhotoWidgetCropper
+              setImage={setImage}
+              imagePreview={files[0].preview}
+            />
+          )}
         </Grid.Column>
         <Grid.Column width={1} />
         <Grid.Column width={4}>
           <Header sub color="teal" content="Step 3 - Preview & Upload" />
-          {files.length > 0 && 
-            <div className='img-preview' style={{minHeight: '200px', overflow: 'hidden'}} />
-          }
+          {files.length > 0 && (
+            <Fragment>
+              <div
+                className="img-preview"
+                style={{ minHeight: "200px", overflow: "hidden" }}
+              />
+              <Button.Group widths={2}>
+                <Button
+                  positive
+                  icon="check"
+                  loading={loading}
+                  onClick={() => uploadPhoto(image!)}
+                />
+                <Button
+                  icon="close"
+                  disabled={loading}
+                  onClick={() => setFiles([])}
+                />
+              </Button.Group>
+            </Fragment>
+          )}
         </Grid.Column>
       </Grid>
     </Fragment>
