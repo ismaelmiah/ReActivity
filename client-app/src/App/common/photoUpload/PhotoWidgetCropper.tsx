@@ -1,4 +1,4 @@
-import React, { Component, useRef } from "react";
+import React, { useRef } from "react";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import { observer } from "mobx-react-lite";

@@ -1,9 +1,8 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Header, Grid, Image, Button } from "semantic-ui-react";
+import { Header, Grid, Button } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 import PhotoWidgetDropzone from "./PhotoWidgetDropzone";
 import PhotoWidgetCropper from "./PhotoWidgetCropper";
-import { loadavg } from "os";
 
 interface IProps {
   loading: boolean;

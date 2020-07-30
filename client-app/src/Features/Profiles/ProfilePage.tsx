@@ -22,7 +22,6 @@ const ProfilePage: React.FC<IProps> = ({ match }) => {
   }, [loadProfile, match]);
 
   if (loadingProfile) return <LoadingComponent content="Loading Profile..." />;
-  console.log("Pro ", profile);
   return (
     <Grid>
       <Grid.Column width={16}>

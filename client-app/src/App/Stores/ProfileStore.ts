@@ -3,7 +3,6 @@ import { observable, action, runInAction, computed } from "mobx";
 import { IProfile, IPhoto } from "../Models/Profile";
 import Agent from "../Api/Agent";
 import { toast } from "react-toastify";
-import { isThisSecond } from "date-fns";
 
 export default class ProfileStore {
   rootStore: RootStore;
@@ -70,16 +69,34 @@ export default class ProfileStore {
       await Agent.Profiles.setMainPhoto(photo.id);
       runInAction(() => {
         this.rootStore.userStore.user!.image = photo.url;
-        this.profile!.photos.find(x=> x.isMain)!.isMain = false;
-        this.profile!.photos.find(x=> x.id === photo.id)!.isMain = true;
+        this.profile!.photos.find((x) => x.isMain)!.isMain = false;
+        this.profile!.photos.find((x) => x.id === photo.id)!.isMain = true;
         this.profile!.image = photo.url;
         this.loading = false;
-      })
+      });
     } catch (error) {
       toast.error("Problem setting photo as main");
       runInAction(() => {
         this.loading = false;
-      })
+      });
     }
-  }
+  };
+
+  @action deletePhoto = async (photo: IPhoto) => {
+    this.loading = true;
+    try {
+      await Agent.Profiles.deletePhoto(photo.id);
+      runInAction(() => {
+        this.profile!.photos = this.profile!.photos.filter(
+          (x) => x.id !== photo.id
+        );
+        this.loading = false;
+      });
+    } catch (error) {
+      toast.error("Problem deleting the photo");
+      runInAction(() => {
+        this.loadingProfile = false;
+      });
+    }
+  };
 }
