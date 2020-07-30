@@ -3,6 +3,7 @@ import { Tab, Header, Card, Image, Button, Grid } from "semantic-ui-react";
 import { RootStoreContext } from "../../App/Stores/rootStore";
 import { observer } from "mobx-react-lite";
 import PhotoUploadWidget from "../../App/common/photoUpload/PhotoUploadWidget";
+import { loadavg } from "os";
 
 const ProfilePhotos = () => {
   const rootStore = useContext(RootStoreContext);
@@ -11,8 +12,11 @@ const ProfilePhotos = () => {
     isCurrentUser,
     uploadPhoto,
     uploadingPhoto,
+    setMainPhoto,
+    loading,
   } = rootStore.profileStore;
-  const [addPhotoMode, setAddPhotoMode] = useState(true);
+  const [addPhotoMode, setAddPhotoMode] = useState(false);
+  const [target, setTarget] = useState<string | undefined>(undefined)
   const handleUploadImage = (photo: Blob) => {
     uploadPhoto(photo).then(() => setAddPhotoMode(false));
   };
@@ -44,7 +48,18 @@ const ProfilePhotos = () => {
                     <Image src={photo.url} />
                     {isCurrentUser && (
                       <Button.Group fluid widths={2}>
-                        <Button basic positive content="Main" />
+                        <Button
+                          name={photo.id}
+                          onClick={(e) => {
+                            setMainPhoto(photo);
+                            setTarget(e.currentTarget.name)
+                          }}
+                          disabled = {photo.isMain}
+                          loading={loading && target === photo.id}
+                          basic
+                          positive
+                          content="Main"
+                        />
                         <Button basic negative icon="trash" />
                       </Button.Group>
                     )}
