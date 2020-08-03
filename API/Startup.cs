@@ -20,7 +20,9 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Identity;
 using AutoMapper;
 using Newtonsoft.Json;
+using API.SignalR;
 using Infrastructure.Photos;
+using System.Threading.Tasks;
 
 namespace API
 {
@@ -45,12 +47,14 @@ namespace API
             {
                 options.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000").AllowCredentials();
                 });
             });
             services.AddMediatR(typeof(list.Handler).Assembly);
             services.AddAutoMapper(typeof(list.Handler));
-            services.AddMvc(opt => {
+            services.AddSignalR();
+            services.AddMvc(opt =>
+            {
                 var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                 opt.Filters.Add(new AuthorizeFilter(policy));
             })
@@ -61,8 +65,10 @@ namespace API
             identityBuilder.AddEntityFrameworkStores<DataContext>();
             identityBuilder.AddSignInManager<SignInManager<AppUser>>();
 
-            services.AddAuthorization(opt => {
-                opt.AddPolicy("IsActivityHost", policy => {
+            services.AddAuthorization(opt =>
+            {
+                opt.AddPolicy("IsActivityHost", policy =>
+                {
                     policy.Requirements.Add(new IsHostRequirement());
                 });
             });
@@ -76,13 +82,27 @@ namespace API
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
-                opt => {
+                opt =>
+                {
                     opt.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = key,
                         ValidateAudience = false,
-                        ValidateIssuer = false 
+                        ValidateIssuer = false
+                    };
+                    opt.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/chat")))
+                            {
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        }
                     };
                 }
             );
@@ -104,6 +124,7 @@ namespace API
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCors("CorsPolicy");
+            app.UseSignalR(routes => { routes.MapHub<ChatHub>("/chat");});
 
             app.UseEndpoints(endpoints =>
             {
