@@ -6,6 +6,7 @@ import { history } from "../..";
 import { toast } from "react-toastify";
 import { RootStore } from "./rootStore";
 import { createAttendee, setActivityProps } from "../common/util/util";
+import { HubConnection, HubConnectionBuilder, LogLevel } from "@aspnet/signalr";
 
 export default class ActivityStore {
   rootStore: RootStore;
@@ -19,6 +20,40 @@ export default class ActivityStore {
   @observable submitting = false;
   @observable target = "";
   @observable loading = false;
+  @observable.ref hubConnection: HubConnection | null = null;
+
+  @action createHubConnection = () => {
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl("http://localhost:5000/chat", {
+        accessTokenFactory: () => this.rootStore.commonStore.token!,
+      })
+      .configureLogging(LogLevel.Information)
+      .build();
+
+    this.hubConnection
+      .start()
+      .then(() => console.log(this.hubConnection!.state))
+      .catch((error) => console.log("Error establishing connection: ", error));
+      
+    this.hubConnection.on("ReceiveComment", comment => {
+      runInAction(() => {
+        this.Activity!.comments.push(comment);
+      })
+    })
+};
+
+@action stopHubConnection = () => {
+  this.hubConnection!.stop();
+}
+
+@action addComment = async (values: any) => {
+  values.ActivityId = this.Activity!.id;
+  try {
+    await this.hubConnection!.invoke('SendComment', values)
+  } catch (error) {
+    console.log(error);
+  }
+}
 
   @computed get activitiesByDate() {
     return this.groupActivitiesByDate(
@@ -73,6 +108,7 @@ export default class ActivityStore {
       let attendees = [];
       attendees.push(attendee);
       activity.Attendees = attendees;
+      activity.comments = [];
       activity.isHost = true;
       runInAction("Create Activity", () => {
         this.activityRegistry.set(activity.id, activity);
@@ -157,47 +193,47 @@ export default class ActivityStore {
       console.log(error);
     }
   };
-  
+
   @action attendActivity = async () => {
     const attendee = createAttendee(this.rootStore.userStore.user!);
     this.loading = true;
     try {
-        await Agent.Activities.attend(this.Activity!.id);
-        runInAction(() => {
-            if (this.Activity) {
-                this.Activity.Attendees.push(attendee);
-                this.Activity.isGoing = true;
-                this.activityRegistry.set(this.Activity.id, this.Activity);
-                this.loading = false;
-            }
-        })
+      await Agent.Activities.attend(this.Activity!.id);
+      runInAction(() => {
+        if (this.Activity) {
+          this.Activity.Attendees.push(attendee);
+          this.Activity.isGoing = true;
+          this.activityRegistry.set(this.Activity.id, this.Activity);
+          this.loading = false;
+        }
+      });
     } catch (error) {
-        runInAction(() => {
-            this.loading = false;
-        })
-        toast.error('Problem for Joining Activity...!!!');
+      runInAction(() => {
+        this.loading = false;
+      });
+      toast.error("Problem for Joining Activity...!!!");
     }
-}
+  };
 
-@action cancelActivity = async () => {
+  @action cancelActivity = async () => {
     this.loading = true;
     try {
-        await Agent.Activities.unattend(this.Activity!.id);
-        runInAction(() => {
-            if (this.Activity) {
-                this.Activity.Attendees = this.Activity.Attendees.filter(
-                    un => un.username !== this.rootStore.userStore.user!.username
-                );
-                this.Activity.isGoing = false;
-                this.activityRegistry.set(this.Activity.id, this.Activity);
-                this.loading = false;
-            }
-        })
+      await Agent.Activities.unattend(this.Activity!.id);
+      runInAction(() => {
+        if (this.Activity) {
+          this.Activity.Attendees = this.Activity.Attendees.filter(
+            (un) => un.username !== this.rootStore.userStore.user!.username
+          );
+          this.Activity.isGoing = false;
+          this.activityRegistry.set(this.Activity.id, this.Activity);
+          this.loading = false;
+        }
+      });
     } catch (error) {
-        runInAction(() => {
-            this.loading = false;
-        })
-        toast.error('Problem for Cancelling Activity...!!!');
+      runInAction(() => {
+        this.loading = false;
+      });
+      toast.error("Problem for Cancelling Activity...!!!");
     }
-}
+  };
 }
