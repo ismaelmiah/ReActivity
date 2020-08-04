@@ -9,31 +9,22 @@ namespace Application.Profiles
 {
     public class Details
     {
-        public class Query : IRequest<Profile> 
-        { 
+        public class Query : IRequest<Profile>
+        {
             public string Username { get; set; }
         }
 
         public class Handler : IRequestHandler<Query, Profile>
         {
-            private readonly DataContext _dataContext;
-            public Handler(DataContext dataContext)
+            private readonly IProfileReader _profileReader;
+            public Handler(IProfileReader profileReader)
             {
-                _dataContext = dataContext;
+                _profileReader = profileReader;
             }
 
             public async Task<Profile> Handle(Query request, CancellationToken cancellationToken)
             {
-                var user = await _dataContext.Users.SingleOrDefaultAsync(x=> x.UserName == request.Username);
-                
-                return new Profile
-                {
-                    DisplayName = user.DisplayName,
-                    Username = user.UserName,
-                    Image = user.Photos.FirstOrDefault(x=> x.IsMain)?.Url,
-                    Photos = user.Photos,
-                    Bio = user.Bio
-                };
+                return await _profileReader.ReadProfile(request.Username);
             }
         }
     }

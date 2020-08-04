@@ -23,6 +23,7 @@ using Newtonsoft.Json;
 using API.SignalR;
 using Infrastructure.Photos;
 using System.Threading.Tasks;
+using Application.Profiles;
 
 namespace API
 {
@@ -78,6 +79,7 @@ namespace API
             services.AddScoped<IJwtGenerator, JwtGenerator>();
             services.AddScoped<IUserAccessor, UserAccessor>();
             services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+            services.AddScoped<IProfileReader, ProfileReader>();
             services.Configure<CloudinarySettings>(Configuration.GetSection("Cloudinary"));
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["TokenKey"]));
