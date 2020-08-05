@@ -92,7 +92,9 @@ const Profiles = {
     requests.postform(`/photos`, photo),
   setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
   deletePhoto: (id: string) => requests.del(`photos/${id}`),
-  updateProfile: (profile: Partial<IProfile>) => requests.put(`/profile`, profile)
+  updateProfile: (profile: Partial<IProfile>) => requests.put(`/profile`, profile),
+  follow: (username: string) => requests.post(`/profile/${username}/follow`, {}),
+  unfollow: (username: string) => requests.del(`/profile/${username}/follow`)
 };
 
 export default {
