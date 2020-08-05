@@ -1,31 +1,37 @@
-import React from "react";
-import { IAttendee } from "../../../App/Models/Activity";
-import { List, Popup, Image } from "semantic-ui-react";
+import React from 'react'
+import { List, Image, Popup } from 'semantic-ui-react';
+import { IAttendee } from '../../../App/Models/Activity';
 
 interface IProps {
-  attendees: IAttendee[];
+    attendees: IAttendee[];
 }
 
-const ActivityListItemAttendees: React.FC<IProps> = ({ attendees }) => {
-  return (
-    <List horizontal>
-      {attendees &&
-        attendees.map((attendee) => (
-          <List.Item key={attendee.username}>
-            <Popup
-              header={attendee.displayName}
-              trigger={
-                <Image
-                  size="mini"
-                  circular
-                  src={attendee.image || `/items/user.png`}
-                />
-              }
-            />
-          </List.Item>
-        ))}
-    </List>
-  );
+const styles = {
+    borderColor: 'green',
+    borderWidth: 2
+}
+
+const ActivityListItemAttendees: React.FC<IProps> = ({attendees}) => {
+    return (
+        <List horizontal>
+            {attendees.map((attendee) => (
+                <List.Item key={attendee.username}> 
+                    <Popup
+                        header={attendee.displayName}
+                        trigger={
+                            <Image 
+                                size='mini' 
+                                circular 
+                                src={attendee.image || '/items/user.png'}
+                                bordered
+                                style={attendee.following ? styles: null}
+                            />
+                        }
+                    />
+                </List.Item>
+            ))};
+        </List>
+    );
 };
 
 export default ActivityListItemAttendees;
