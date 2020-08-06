@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { IActivity } from "../Models/Activity";
+import { IActivity, IActivitesEnvelope } from "../Models/Activity";
 import { history } from "../..";
 import { toast } from "react-toastify";
 import { IUser, IUserFormValue } from "../Models/User";
@@ -67,7 +67,8 @@ const requests = {
 };
 
 const Activities = {
-  list: (): Promise<IActivity[]> => requests.get("/activities"),
+  list: (Limit?: number, Page?: number): Promise<IActivitesEnvelope> =>
+    requests.get(`/activities?limit=${Limit}&offset=${Page? Page*Limit! : 0}`),
   details: (id: string) => requests.get(`/activities/${id}`),
   create: (activity: IActivity) => requests.post("/activities", activity),
   update: (activity: IActivity) =>
@@ -92,10 +93,13 @@ const Profiles = {
     requests.postform(`/photos`, photo),
   setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
   deletePhoto: (id: string) => requests.del(`photos/${id}`),
-  updateProfile: (profile: Partial<IProfile>) => requests.put(`/profile`, profile),
-  follow: (username: string) => requests.post(`/profile/${username}/follow`, {}),
+  updateProfile: (profile: Partial<IProfile>) =>
+    requests.put(`/profile`, profile),
+  follow: (username: string) =>
+    requests.post(`/profile/${username}/follow`, {}),
   unfollow: (username: string) => requests.del(`/profile/${username}/follow`),
-  listFollowings: (username: string, predicate: string) => requests.get(`/profile/${username}/follow?predicate=${predicate}`)
+  listFollowings: (username: string, predicate: string) =>
+    requests.get(`/profile/${username}/follow?predicate=${predicate}`),
 };
 
 export default {

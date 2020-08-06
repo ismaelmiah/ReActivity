@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -13,9 +14,24 @@ namespace Application.Activities
 {
     public class list
     {
-        public class Query : IRequest<List<ActivityDto>> { }
+        public class ActivityEnvelope
+        {
+            public List<ActivityDto> Activities { get; set; }
+            public int ActivityCount { get; set; }
+        }
+        public class Query : IRequest<ActivityEnvelope>
+        {
+            public Query(int? limit, int? offset)
+            {
+                Limit = limit;
+                Offset = offset;
 
-        public class Handler : IRequestHandler<Query, List<ActivityDto>>
+            }
+            public int? Limit { get; set; }
+            public int? Offset { get; set; }
+        }
+
+        public class Handler : IRequestHandler<Query, ActivityEnvelope>
         {
             private readonly DataContext _context;
             private readonly ILogger<list> _logger;
@@ -27,25 +43,31 @@ namespace Application.Activities
                 _context = context;
 
             }
-            public async Task<List<ActivityDto>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<ActivityEnvelope> Handle(Query request, CancellationToken cancellationToken)
             {
-                try
-                {
-                    for (int i = 0; i < 1; i++)
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-                        await Task.Delay(500, cancellationToken);
-                        _logger.LogInformation($"Task {i} has Completed");
-                    }
-                }
-                catch (Exception ex) when (ex is TaskCanceledException)
-                {
-                    _logger.LogInformation("Task was Cancelled");
-                }
-                var activities = await _context.Activities.ToListAsync(cancellationToken);
+                // try
+                // {
+                //     for (int i = 0; i < 1; i++)
+                //     {
+                //         cancellationToken.ThrowIfCancellationRequested();
+                //         await Task.Delay(500, cancellationToken);
+                //         _logger.LogInformation($"Task {i} has Completed");
+                //     }
+                // }
+                // catch (Exception ex) when (ex is TaskCanceledException)
+                // {
+                //     _logger.LogInformation("Task was Cancelled");
+                // }
 
-                var ReturnActivities = _mapper.Map<List<Activity>, List<ActivityDto>>(activities);
-                return ReturnActivities;
+                var queryable = _context.Activities.AsQueryable();
+
+                var activities = await queryable.Skip(request.Offset??0).Take(request.Limit??3).ToListAsync(); 
+
+                return new ActivityEnvelope
+                {
+                    Activities = _mapper.Map<List<Activity>, List<ActivityDto>>(activities),
+                    ActivityCount = queryable.Count() 
+                };
             }
         }
     }
