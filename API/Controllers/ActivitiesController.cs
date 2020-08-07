@@ -13,8 +13,8 @@ namespace API.Controllers
     public class ActivitiesController : BaseController
     {
         [HttpGet]
-        public async Task<ActionResult<list.ActivityEnvelope>> List(int? limit, int? offset){
-            return await Mediator.Send(new list.Query(limit, offset));
+        public async Task<ActionResult<list.ActivityEnvelope>> List(int? limit, int? offset, bool isGoing, bool isHost, DateTime? startDate){
+            return await Mediator.Send(new list.Query(limit, offset, isGoing, isHost, startDate));
         }
 
         [Authorize]
