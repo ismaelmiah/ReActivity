@@ -5,21 +5,29 @@ import { observer } from 'mobx-react-lite';
 import { RootStoreContext } from '../../../App/Stores/rootStore';
 
 const ActivityFilters = () => {
+    const rootStore = useContext(RootStoreContext);
+    const {predicate, setPredicate} = rootStore.activityStore;
   return (
     <Fragment>
         <Menu vertical size={'large'} style={{ width: '100%', marginTop: 30 }}>
             <Header icon={'filter'} attached color={'green'} content={'Filters'} />
             <Menu.Item 
+                active={predicate.size === 0}
+                onClick = {() => setPredicate('all', 'true')}
                 color={'green'} 
                 name={'all'} 
                 content={'All Activities'} 
             />
             <Menu.Item 
+                active={predicate.has('isGoing')}
+                onClick = {() => setPredicate('isGoing', 'true')}
                 color={'green'} 
                 name={'username'} 
                 content={"I'm Going"} 
             />
             <Menu.Item 
+                active={predicate.has('isHost')}
+                onClick = {() => setPredicate('isHost', 'true')}
                 color={'green'} 
                 name={'host'} 
                 content={"I'm hosting"} 
@@ -27,7 +35,8 @@ const ActivityFilters = () => {
         </Menu>
         <Header icon={'calendar'} attached color={'green'} content={'Select Date'} />
         <Calendar 
-            value={new Date()}
+            onChange = {(date) => setPredicate('startDate', date!)}
+            value={predicate.get('startDate') || new Date()}
         />
     </Fragment>
   );
