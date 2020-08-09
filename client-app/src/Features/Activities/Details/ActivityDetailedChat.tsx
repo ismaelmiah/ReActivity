@@ -1,5 +1,5 @@
 import React, { Fragment, useContext, useEffect } from "react";
-import { Segment, Header, Form, Button, Comment, TextArea } from "semantic-ui-react";
+import { Segment, Header, Form, Button, Comment } from "semantic-ui-react";
 import { RootStoreContext } from "../../../App/Stores/rootStore";
 import { Form as FinalForm, Field } from "react-final-form";
 import { Link } from "react-router-dom";
