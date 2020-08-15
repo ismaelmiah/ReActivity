@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Activities;
 using System;
-using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading;
@@ -30,7 +29,6 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "IsActivityHost")]
         public async Task<ActionResult<Unit>> Edit(Guid id, edit.Command command)
         {
             command.Id = id;
@@ -38,7 +36,6 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "IsActivityHost")]
         public async Task<ActionResult<Unit>> Delete(Guid id)
         {
             return await Mediator.Send(new delete.Command{Id = id});

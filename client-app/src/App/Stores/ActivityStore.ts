@@ -1,4 +1,4 @@
-import { observable, action, computed, runInAction, reaction } from "mobx";
+import { observable, action, computed, runInAction, reaction, toJS } from "mobx";
 import { SyntheticEvent } from "react";
 import Agent from "../Api/Agent";
 import { IActivity } from "../Models/Activity";
@@ -192,7 +192,7 @@ export default class ActivityStore {
     const user = this.rootStore.userStore.user!;
     if (activity) {
       this.Activity = activity;
-      return activity;
+      return toJS(activity);
     } else {
       this.loadingInitial = true;
       try {
