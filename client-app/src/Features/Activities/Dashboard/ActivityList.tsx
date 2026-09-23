@@ -7,6 +7,7 @@ import { RootStoreContext } from '../../../App/Stores/rootStore';
 const ActivityList = () => {
     const rootStore = useContext(RootStoreContext);
     const {activitiesByDate} = rootStore.activityStore;
+    console.log("Activities by date: ", activitiesByDate);
     return (
         <Fragment>
             {activitiesByDate.map(([group, activities]) => (

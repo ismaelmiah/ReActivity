@@ -1,6 +1,6 @@
 import React, { useRef } from "react";
-import Cropper from "react-cropper";
-import "cropperjs/dist/cropper.css";
+import Cropper, { ReactCropperElement } from "react-cropper";
+// import "cropperjs/dist/cropper.css";
 import { observer } from "mobx-react-lite";
 
 interface IProps {
@@ -9,17 +9,17 @@ interface IProps {
 }
 
 const PhotoWidgetCropper: React.FC<IProps> = ({ setImage, imagePreview }) => {
-  const cropper = useRef<Cropper>(null);
+  const cropper = useRef<ReactCropperElement>(null);
   const cropImage = () => {
     if (
       cropper.current &&
-      typeof cropper.current.getCroppedCanvas() === "undefined"
+      typeof cropper?.current?.cropper?.getCroppedCanvas() === "undefined"
     ) {
       return;
     }
     cropper &&
       cropper.current &&
-      cropper.current.getCroppedCanvas().toBlob((blob: any) => {
+      cropper?.current?.cropper?.getCroppedCanvas().toBlob((blob: any) => {
         setImage(blob);
       }, "image/jpeg");
   };

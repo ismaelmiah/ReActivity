@@ -36,7 +36,7 @@ const ActivityFilters = () => {
         <Header icon={'calendar'} attached color={'green'} content={'Select Date'} />
         <Calendar 
             onChange = {(date) => setPredicate('startDate', date!)}
-            value={predicate.get('startDate') || new Date()}
+            value={predicate.get('startDate') as Date || new Date()}
         />
     </Fragment>
   );
