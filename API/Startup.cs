@@ -129,6 +129,7 @@ namespace API
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseCors("CorsPolicy");
+            app.UseRouting();
             app.UseEndpoints(routes =>
             {
                 routes.MapHub<ChatHub>("/chat");

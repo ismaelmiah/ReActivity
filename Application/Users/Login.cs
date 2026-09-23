@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -52,6 +53,8 @@ namespace Application.Users
 
                 var result = await _signInManager.CheckPasswordSignInAsync(user, request.Password, false);
 
+                Console.WriteLine($"Login result: {result.Succeeded}, {result.IsLockedOut}, {result.IsNotAllowed}, {result.RequiresTwoFactor}");
+                
                 if (result.Succeeded)
                 {
                     //Todo Generate TOKEN
