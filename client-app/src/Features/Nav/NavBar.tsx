@@ -13,7 +13,7 @@ const NavBar = () => {
         <Menu fixed='top' inverted>
             <Container>
                 <Menu.Item header as={NavLink} exact to='/'>
-                    <img src="/items/logo.png" alt="logo" style={{marginRight: '10px'}}/>
+                    <img src="/images/logo.png" alt="logo" style={{marginRight: '10px'}}/>
                     Reactivities
                 </Menu.Item>
                 <Menu.Item name='Activities'  as={NavLink} to='/activities'/>
@@ -22,7 +22,7 @@ const NavBar = () => {
                 </Menu.Item>
                 {user &&        
                     <Menu.Item position='right'>
-                        <Image avatar spaced='right' src={ user.image || '/items/user.png'} />
+                        <Image avatar spaced='right' src={ user.image || '/images/user.png'} />
                         <Dropdown pointing='top left' text={user.displayName}>
                             <Dropdown.Menu>
                             <Dropdown.Item as={Link} to={`/profile/${user.username}`} text='My profile' icon='user'/>

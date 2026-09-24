@@ -1,11 +1,10 @@
-import {
-  makeAutoObservable,
-  reaction,
-  runInAction,
-  toJS,
-} from "mobx";
+import { makeAutoObservable, reaction, runInAction, toJS } from "mobx";
 import { SyntheticEvent } from "react";
-import { HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import {
+  HubConnection,
+  HubConnectionBuilder,
+  LogLevel,
+} from "@microsoft/signalr";
 import { toast } from "react-toastify";
 
 import Agent from "../Api/Agent";
@@ -47,7 +46,7 @@ export default class ActivityStore {
         this.page = 0;
         this.activityRegistry.clear();
         this.loadActivities();
-      }
+      },
     );
   }
 
@@ -63,10 +62,7 @@ export default class ActivityStore {
     const params = new URLSearchParams();
 
     params.append("limit", String(LIMIT));
-    params.append(
-      "offset",
-      `${this.page ? this.page * LIMIT : 0}`
-    );
+    params.append("offset", `${this.page ? this.page * LIMIT : 0}`);
 
     this.predicate.forEach((value, key) => {
       if (key === "startDate" && value instanceof Date) {
@@ -90,8 +86,7 @@ export default class ActivityStore {
   createHubConnection = () => {
     this.hubConnection = new HubConnectionBuilder()
       .withUrl(process.env.REACT_APP_API_CHAT_URL!, {
-        accessTokenFactory: () =>
-          this.rootStore.commonStore.token!,
+        accessTokenFactory: () => this.rootStore.commonStore.token!,
       })
       .configureLogging(LogLevel.Information)
       .build();
@@ -102,13 +97,15 @@ export default class ActivityStore {
         console.log(this.hubConnection?.state);
       })
       .catch((error) => {
-        console.log(
-          "Error establishing connection: ",
-          error
-        );
+        console.error("Error establishing connection: ", error);
       });
 
     this.hubConnection.on("ReceiveComment", (comment) => {
+      console.log("========== SIGNALR MESSAGE ==========");
+      console.log("Event:", "ReceiveComment");
+      console.log("Raw comment:", comment);
+      console.log("Comment JSON:", JSON.stringify(comment, null, 2));
+      console.log("====================================");
       runInAction(() => {
         if (this.Activity) {
           this.Activity.comments.push(comment);
@@ -134,28 +131,25 @@ export default class ActivityStore {
     try {
       await this.hubConnection.invoke("SendComment", values);
     } catch (error) {
-      console.log(error);
+      console.error("Add comment error:", error);
     }
   };
 
   get activitiesByDate() {
     return this.groupActivitiesByDate(
-      Array.from(this.activityRegistry.values())
+      Array.from(this.activityRegistry.values()),
     );
   }
 
   groupActivitiesByDate(activities: IActivity[]) {
     const sortedActivities = [...activities].sort(
-      (a, b) =>
-        a.date.getTime() - b.date.getTime()
+      (a, b) => a.date.getTime() - b.date.getTime(),
     );
 
     return Object.entries(
       sortedActivities.reduce(
         (grouped, activity) => {
-          const date = activity.date
-            .toISOString()
-            .split("T")[0];
+          const date = activity.date.toISOString().split("T")[0];
 
           grouped[date] = grouped[date]
             ? [...grouped[date], activity]
@@ -163,8 +157,8 @@ export default class ActivityStore {
 
           return grouped;
         },
-        {} as Record<string, IActivity[]>
-      )
+        {} as Record<string, IActivity[]>,
+      ),
     );
   }
 
@@ -176,23 +170,15 @@ export default class ActivityStore {
     this.loadingInitial = true;
 
     try {
-      const activitiesEnvelope =
-        await Agent.Activities.list(this.axiosParams);
+      const activitiesEnvelope = await Agent.Activities.list(this.axiosParams);
 
-      const { activities, activityCount } =
-        activitiesEnvelope;
+      const { activities, activityCount } = activitiesEnvelope;
 
       runInAction(() => {
         activities.forEach((activity) => {
-          setActivityProps(
-            activity,
-            this.rootStore.userStore.user!
-          );
+          setActivityProps(activity, this.rootStore.userStore.user!);
 
-          this.activityRegistry.set(
-            activity.id,
-            activity
-          );
+          this.activityRegistry.set(activity.id, activity);
         });
 
         this.activityCount = activityCount;
@@ -203,7 +189,7 @@ export default class ActivityStore {
         this.loadingInitial = false;
       });
 
-      console.log(error);
+      console.error("loadActivities error:", error);
     }
   };
 
@@ -213,21 +199,16 @@ export default class ActivityStore {
     try {
       await Agent.Activities.create(activity);
 
-      const attendee = createAttendee(
-        this.rootStore.userStore.user!
-      );
+      const attendee = createAttendee(this.rootStore.userStore.user!);
 
       attendee.isHost = true;
 
-      activity.Attendees = [attendee];
+      activity.attendees = [attendee];
       activity.comments = [];
       activity.isHost = true;
 
       runInAction(() => {
-        this.activityRegistry.set(
-          activity.id,
-          activity
-        );
+        this.activityRegistry.set(activity.id, activity);
 
         this.submitting = false;
       });
@@ -239,7 +220,7 @@ export default class ActivityStore {
       });
 
       toast.error("Problem Submitting Data");
-      console.log(error);
+      console.error("Create activity error:", error);
     }
   };
 
@@ -250,10 +231,7 @@ export default class ActivityStore {
       await Agent.Activities.update(activity);
 
       runInAction(() => {
-        this.activityRegistry.set(
-          activity.id,
-          activity
-        );
+        this.activityRegistry.set(activity.id, activity);
 
         this.Activity = activity;
         this.submitting = false;
@@ -266,7 +244,7 @@ export default class ActivityStore {
       });
 
       toast.error("Problem Submitting Data");
-      console.log(error);
+      console.error("Edit activity error:", error);
     }
   };
 
@@ -288,10 +266,7 @@ export default class ActivityStore {
         setActivityProps(activity!, user);
 
         this.Activity = activity!;
-        this.activityRegistry.set(
-          activity!.id,
-          activity!
-        );
+        this.activityRegistry.set(activity!.id, activity!);
 
         this.loadingInitial = false;
       });
@@ -302,7 +277,7 @@ export default class ActivityStore {
         this.loadingInitial = false;
       });
 
-      console.log(error);
+      console.error("Load activity error:", error);
     }
   };
 
@@ -312,7 +287,7 @@ export default class ActivityStore {
 
   deleteActivity = async (
     event: SyntheticEvent<HTMLButtonElement>,
-    id: string
+    id: string,
   ) => {
     this.submitting = true;
     this.target = event.currentTarget.name;
@@ -331,31 +306,24 @@ export default class ActivityStore {
         this.target = "";
       });
 
-      console.log(error);
+      console.error("Delete activity error:", error);
     }
   };
 
   attendActivity = async () => {
-    const attendee = createAttendee(
-      this.rootStore.userStore.user!
-    );
+    const attendee = createAttendee(this.rootStore.userStore.user!);
 
     this.loading = true;
 
     try {
-      await Agent.Activities.attend(
-        this.Activity!.id
-      );
+      await Agent.Activities.attend(this.Activity!.id);
 
       runInAction(() => {
         if (this.Activity) {
-          this.Activity.Attendees.push(attendee);
+          this.Activity.attendees.push(attendee);
           this.Activity.isGoing = true;
 
-          this.activityRegistry.set(
-            this.Activity.id,
-            this.Activity
-          );
+          this.activityRegistry.set(this.Activity.id, this.Activity);
 
           this.loading = false;
         }
@@ -365,9 +333,7 @@ export default class ActivityStore {
         this.loading = false;
       });
 
-      toast.error(
-        "Problem for Joining Activity...!!!"
-      );
+      toast.error("Problem for Joining Activity...!!!");
     }
   };
 
@@ -375,26 +341,18 @@ export default class ActivityStore {
     this.loading = true;
 
     try {
-      await Agent.Activities.unattend(
-        this.Activity!.id
-      );
+      await Agent.Activities.unattend(this.Activity!.id);
 
       runInAction(() => {
         if (this.Activity) {
-          this.Activity.Attendees =
-            this.Activity.Attendees.filter(
-              (attendee) =>
-                attendee.username !==
-                this.rootStore.userStore.user!
-                  .username
-            );
+          this.Activity.attendees = this.Activity.attendees.filter(
+            (attendee) =>
+              attendee.username !== this.rootStore.userStore.user!.username,
+          );
 
           this.Activity.isGoing = false;
 
-          this.activityRegistry.set(
-            this.Activity.id,
-            this.Activity
-          );
+          this.activityRegistry.set(this.Activity.id, this.Activity);
 
           this.loading = false;
         }
@@ -404,9 +362,7 @@ export default class ActivityStore {
         this.loading = false;
       });
 
-      toast.error(
-        "Problem for Cancelling Activity...!!!"
-      );
+      toast.error("Problem for Cancelling Activity...!!!");
     }
   };
 }

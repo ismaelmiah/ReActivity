@@ -9,7 +9,6 @@ const ProfileFollowings = () => {
       profile, followings, 
       loading, activeTab 
     } = rootStore.profileStore;
- console.log("Following = ", followings)
   return (
     <Tab.Pane loading={loading}>
       <Grid>

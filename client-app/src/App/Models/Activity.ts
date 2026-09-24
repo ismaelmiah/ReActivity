@@ -13,7 +13,7 @@ export interface IActivity {
     venue: string;
     isGoing: boolean;
     isHost: boolean;
-    Attendees: IAttendee[];
+    attendees: IAttendee[];
     comments: IComment[];
 }
 

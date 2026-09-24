@@ -10,7 +10,7 @@ interface IProps {
 const ProfileCard: React.FC<IProps> = ({profile}) => {
   return (
     <Card as={Link} to={`/profile/${profile.username}`}>
-      <Image src={profile.image || '/items/user.png'} />
+      <Image src={profile.image || '/images/user.png'} />
       <Card.Content>
         <Card.Header>{profile.displayName}</Card.Header>
       </Card.Content>

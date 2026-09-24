@@ -22,7 +22,7 @@ const ActivityListItemAttendees: React.FC<IProps> = ({attendees}) => {
                             <Image 
                                 size='mini' 
                                 circular 
-                                src={attendee.image || '/items/user.png'}
+                                src={attendee.image || '/images/user.png'}
                                 bordered
                                 style={attendee.following ? styles: null}
                             />

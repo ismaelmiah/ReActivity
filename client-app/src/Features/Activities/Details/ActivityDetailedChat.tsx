@@ -5,6 +5,7 @@ import { Form as FinalForm, Field } from "react-final-form";
 import { Link } from "react-router-dom";
 import TextAreaInput from "../../../App/common/form/TextAreaInput";
 import { observer } from "mobx-react-lite";
+import { format } from "date-fns";
 
 const ActivityDetailedChat = () => {
   const rootStore = useContext(RootStoreContext);
@@ -39,13 +40,13 @@ const ActivityDetailedChat = () => {
             Activity.comments &&
             Activity.comments.map(comment => (
               <Comment key={comment.id}>
-                <Comment.Avatar src={comment.image || `/items/user.png`} />
+                <Comment.Avatar src={comment.image || `/images/user.png`} />
                 <Comment.Content>
                   <Comment.Author as={Link} to={`/profile/${comment.username}`}>
                     {comment.displayName}
                   </Comment.Author>
                   <Comment.Metadata>
-                    <div>{comment.createdAt}</div>
+                    <div>{format(new Date(comment.createdAt), "eeee do MMMM") } at {format(new Date(comment.createdAt), 'h:mm a')}</div>
                   </Comment.Metadata>
                   <Comment.Text>{comment.body}</Comment.Text>
                 </Comment.Content>

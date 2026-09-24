@@ -95,7 +95,7 @@ export default class ProfileStore {
         this.loadingProfile = false;
       });
 
-      console.log(error);
+      console.error("Load profile error:", error);
     }
   };
 
@@ -124,7 +124,7 @@ export default class ProfileStore {
         this.uploadingPhoto = false;
       });
     } catch (error) {
-      console.log(error);
+      console.error("Upload photo error:", error);
       toast.error("Problem Uploading Photo");
 
       runInAction(() => {

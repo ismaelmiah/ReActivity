@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
-import { Segment, Item, Header, Button, Image } from "semantic-ui-react";
-import { IActivity } from "../../../App/Models/Activity";
-import { observer } from "mobx-react-lite";
+import { Button, Header, Image, Item, Segment } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
+import { observer } from "mobx-react-lite";
+import { IActivity } from "../../../App/Models/Activity";
 import { RootStoreContext } from "../../../App/Stores/rootStore";
 
 const activityImageStyle = {
@@ -15,24 +15,40 @@ const activityImageTextStyle = {
   bottom: "5%",
   left: "5%",
   width: "100%",
-  height: "auto",
-  color: "white",
 };
 
 const ActivityDetailedHeader: React.FC<{ activity: IActivity }> = ({
   activity,
 }) => {
   const rootStore = useContext(RootStoreContext);
-  const { cancelActivity, attendActivity, loading } = rootStore.activityStore;
-  const host = activity.Attendees.filter((a) => a.isHost)[0];
+
+  const {
+    cancelActivity,
+    attendActivity,
+    loading,
+    loadingInitial,
+  } = rootStore.activityStore;
+
+  if (loadingInitial) {
+    return <div>Loading...</div>;
+  }
+
+  const attendees = activity.attendees ?? [];
+  const host = attendees.find((a) => a.isHost);
+
+  if (!host) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Segment.Group>
       <Segment basic attached="top" style={{ padding: "0" }}>
         <Image
-          src={`/items/Categoryimages/${activity.category}.jpg`}
+          src={`/images/${activity.category}.jpg`}
           fluid
           style={activityImageStyle}
         />
+
         <Segment style={activityImageTextStyle} basic>
           <Item.Group>
             <Item>
@@ -42,11 +58,12 @@ const ActivityDetailedHeader: React.FC<{ activity: IActivity }> = ({
                   content={activity.title}
                   style={{ color: "white" }}
                 />
-                <p>{format(activity.date, "eeee do MMMM")}</p>
-                <p>
+                <p style={{ color: "white" }}>
+                  {format(activity.date, "eeee do MMMM")}
+                </p>
+                <p style={{ color: "white" }}>
                   Hosted by{" "}
                   <Link to={`/profile/${host.username}`}>
-                    {" "}
                     <strong>{host.displayName}</strong>
                   </Link>
                 </p>
@@ -55,6 +72,7 @@ const ActivityDetailedHeader: React.FC<{ activity: IActivity }> = ({
           </Item.Group>
         </Segment>
       </Segment>
+
       <Segment clearing attached="bottom">
         {activity.isHost ? (
           <Button
@@ -70,7 +88,11 @@ const ActivityDetailedHeader: React.FC<{ activity: IActivity }> = ({
             Cancel attendance
           </Button>
         ) : (
-          <Button loading={loading} onClick={attendActivity} color="teal">
+          <Button
+            loading={loading}
+            onClick={attendActivity}
+            color="teal"
+          >
             Join Activity
           </Button>
         )}
