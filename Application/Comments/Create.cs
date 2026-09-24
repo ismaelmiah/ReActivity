@@ -45,7 +45,8 @@ namespace Application.Comments
                 {
                     Body = request.Body,
                     Activity = activity,
-                    Author = user
+                    Author = user,
+                    CreatedAt = DateTime.UtcNow
                 };
 
                 activity.Comments.Add(comment);

@@ -51,20 +51,6 @@ namespace Application.Activities
             }
             public async Task<ActivityEnvelope> Handle(Query request, CancellationToken cancellationToken)
             {
-                // try
-                // {
-                //     for (int i = 0; i < 1; i++)
-                //     {
-                //         cancellationToken.ThrowIfCancellationRequested();
-                //         await Task.Delay(500, cancellationToken);
-                //         _logger.LogInformation($"Task {i} has Completed");
-                //     }
-                // }
-                // catch (Exception ex) when (ex is TaskCanceledException)
-                // {
-                //     _logger.LogInformation("Task was Cancelled");
-                // }
-
                 var queryable = _context.Activities.
                     Where(x => x.Date >= request.StartDate)
                     .OrderBy(x => x.Date)
