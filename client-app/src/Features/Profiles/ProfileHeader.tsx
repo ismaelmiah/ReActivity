@@ -56,17 +56,17 @@ const ProfileHeader: React.FC<IProps> = ({
                 <Button
                   fluid
                   color="teal"
-                  content={profile.following ? "Following" : "Not Following"}
+                  content={profile.isFollowed ? "Following" : "Not Following"}
                 />
               </Reveal.Content>
               <Reveal.Content hidden>
                 <Button
                   fluid
                   basic
-                  color={profile.following ? "red" : "green"}
-                  content={profile.following ? "Unfollow" : "Follow"}
+                  color={profile.isFollowed ? "red" : "green"}
+                  content={profile.isFollowed ? "Unfollow" : "Follow"}
                   onClick={
-                    profile.following
+                    profile.isFollowed
                       ? () => unfollow(profile.username)
                       : () => follow(profile.username)
                   }
